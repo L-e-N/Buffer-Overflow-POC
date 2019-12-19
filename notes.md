@@ -56,7 +56,7 @@ response at n°292 => Linux
 
 ### n°804
 
-paylaod="chmod u+w A9826"
+payload="chmod u+w A9826"
 
 ### n°1246
 
@@ -70,9 +70,13 @@ payload="chmod u-w A9826"
 
 payload="exit"
 
-## BOV
+## WEAKNESSES
 
 in  traitementClient.c:sanitizeBuffer, it compares using a > and not a >= 
+We replay the flow using gdb. 
+We notice that in trace.pcap `ECHO %x%x%x%x %x`. returns `8049f6713b018 ffc39895` while on our computer it returns `8049f67160018 ffffd365`. -- voir image serveur_ECHO_return.png
+This address is found again at the end of the payload we send, but backwards.  --voir image wireshark_trace_tcp
+On va donc modifier la payload qu'on envoie pour changer cette adresse moins 4 (décalage). 
 
 ## GDB
 
