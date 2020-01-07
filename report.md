@@ -93,11 +93,36 @@ On remarque de même que il y a toujours le même écart 0xF7 entre cette adress
 
 ![img](./assets/echo.png)
 
-````
+```
 &RET = FF C9 2F 2C
 réponse = FF C9 2E 35 (ECHO )
 &(début message envoyé) = réponse - 5 = FF C9 2E 30
 
 &RET - réponse = F7
 Donc &RET = réponse + F7 (+F6 car sera incrémenté +1 après dans le code)
+```
 
+### Remarque
+
+Il faut lancer le serveur avec un paramètre nx à 0 pour permettre d'exécuter des instructions de la pile.
+
+![img](./assets/nx.png)
+
+### Que fait les instructions de la payload?
+
+Il ouvre un shell?
+
+### Fin de l'échange
+
+Dans le shell 
+
+```
+uname
+-> Linux
+chmod u+w A9826
+echo 1000000 > A9826
+chmod u-w A9826
+exit
+```
+
+On ajoute les droits d'écriture à l'user, on écrit dans 10926 et on les enlève.
