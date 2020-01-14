@@ -183,16 +183,21 @@ Cependant, le message que l'attaquant souhaite éxécuter est dans le stack, on 
 
 ## 4 Fonctionnement de la payload désassemblée
 
+La majorité des instructions préparent les registres pour effectuer des appels systèmes.
+On repère dans la payload plusieurs interruptions INT 0x80, qui selon la valeur du registre EAX font des appels systèmes différents, avec les arguments stockés dans les registres EBX, ECX..
+
 Détaillons les étapes principales de la payload
-1. Toboggan de nop
-2. JMP vers "CALL MAIN"
-3. Initialisation des registres de travail
-4. Appel systeme MMAP, on alloue un espace mémoire qu'on notera M, où on pourra lire et écrire
-Puis cherche une connexion de socket vers l'exterieur:
-Tant que l'appel système getpeername(file descriptor) ne trouve pas la socket, on loop.
-Quand on l'a trouvée, on la stocke dans M.
-6. Appels systèmes DUP2(ECX=0),DUP2(ECX=1),DUP2(ECX=2) pour copier respectivement stdin, stdout, stderr.
-7. Appel système Execve avec /bin/sh comme argument
+1. Toboggan de nop pour commencer les instructions au début
+2. JMP vers "CALL MAIN" 
+3. Initialisation des registres de travail avec les XOR EAX,EAX
+
+Le premier appel système effectué est un mmap (avec EAX=192). Cet appel système alloue un espace mémoire M où l'attaquant pourra écrire ce qu'il voudra en mettant les droits de lecture et écriture.
+
+Le second appel sytème est getpeername (EAX = 368). Cet appel système renvoie les informations sur un socket qui serait ouvert. L'attaquant appelle getpeername sur un file descriptor qu'il incrémente jusqu'à trouver la socket ouverte sur laquelle il est connecté. 
+
+Le troisième appel système DUP2(EAX = 63) avec comme paramètre EBX= 0, 1, 2 copie respectivement stdin, stdout, stderr.
+
+Le dernier appel système est Execve (EAX = 11) qui appelle la fonction en argument. En l'occurence l'attaquant éxécute /bin/sh pour lancer un shell
 
 **Payload de l'attaquant désassemblée**
 
@@ -382,6 +387,8 @@ Pour vous aider à combler cette faille, voici nos recommandations:
 - Ne pas faire tourner votre serveur avec le bit NX désactivé, cela diminuera les risques. (`B2B-OPTS="-p 6000 -x 0` en `B2B-OPTS="-p 6000`)
 - Durcir votre politique de sécurité dans le firewall, en empêchant des des paquets aussi gros d'être reçu on en filtrant les paquets ayant des caractères suspicieux.
 - Ou fixer directement le format des payload du echo `snprintf(*response, len, "%s", echo)`.
+
+Enfin, étant donné à quel point l'attaque est spécifique à votre système (ex. ils savent que le bit NX est désactivé) et à votre code source (for loop), il est possible que l'attaquant soit proche de la société Pressoare. Il pourrait être un client, voire un ancien employé.
 
 Bien à vous, je vous souhaite bonne continuation. En espérant que cet incident ne vous vaudra pas trop de préjudices.
 
