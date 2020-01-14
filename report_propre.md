@@ -195,9 +195,9 @@ Le premier appel système effectué est un mmap (avec EAX=192). Cet appel systè
 
 Le second appel sytème est getpeername (EAX = 368). Cet appel système renvoie les informations sur un socket qui serait ouvert. L'attaquant appelle getpeername sur un file descriptor qu'il incrémente jusqu'à trouver la socket ouverte sur laquelle il est connecté. 
 
-Le troisième appel système DUP2(EAX = 63) avec comme paramètre EBX= 0, 1, 2 copie respectivement stdin, stdout, stderr.
+Le troisième appel système DUP2(EAX = 63) avec comme paramètre EBX= 0, 1, 2 copie respectivement stdin, stdout, stderr. C'est ainsi que l'attaquant peut envoyer des commandes, récupérer les retours, et récupérer les messages d'erreur.
 
-Le dernier appel système est Execve (EAX = 11) qui appelle la fonction en argument. En l'occurence l'attaquant éxécute /bin/sh pour lancer un shell
+Le dernier appel système est Execve (EAX = 11) qui appelle la fonction donnée en argument. En l'occurence l'attaquant éxécute /bin/sh pour lancer un shell.
 
 **Payload de l'attaquant désassemblée**
 
@@ -282,7 +282,7 @@ Le dernier appel système est Execve (EAX = 11) qui appelle la fonction en argum
 
 
 ## 5 Instructions malveillantes éxécutées dans le shell
-Suite à l'éxécution de la payload, l'attaquant réussit alors à ouvrir un shell et éxécute des instructions pour changer les droits d'écriture, rajouter 1000000 dans le fichier du compte en banque A9826, puis remet les droits d'écriture comme avant pour etre discret.
+Une fois le shell lancé, l'attaquant éxécute des instructions pour changer les droits d'écriture, rajouter 1000000 dans le fichier du compte en banque A9826, puis remet les droits d'écriture comme avant pour etre discret.
 ```
 uname
 -> Linux
