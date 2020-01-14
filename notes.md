@@ -1,5 +1,10 @@
 # Notes
 
+## Explicaiton Assembleur
+
+Tout d'abord 
+
+
 ## Enter vms
 
 ssh user@192.168.56.102

